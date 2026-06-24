@@ -1,36 +1,72 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Inspire X Planner
 
-## Getting Started
+An RPM (Result, Purpose, Massive Action Plan) life planning tool for Rob Nickester / Inspire X, based on Tony Robbins' methodology.
 
-First, run the development server:
+## Stack
+
+- **Next.js 16** (App Router, TypeScript)
+- **Supabase** (PostgreSQL, Auth, Storage, RLS)
+- **shadcn/ui** with `@base-ui/react`
+- **Tailwind CSS** — dark navy theme
+- **@dnd-kit/core** — drag-and-drop for Weekly Plan
+- **date-fns** — date utilities
+
+## Features
+
+- **Categories** — life areas with Big Picture (vision, purpose, roles, horizons, micro-goals)
+- **Projects** — organized under categories with key results and inspiration board
+- **Actions & RPM Blocks** — tasks with duration, starring, recurrence, and RPM grouping
+- **Weekly Capture** — capture all actions by category for a week
+- **Weekly Plan** — drag actions onto Mon–Sun day columns
+- **Weekly Reflection** — wins, reflection, and category breakdown
+- **My Day** — daily action view
+- **Monthly Calendar** — see planned actions across the month
+- **Category Spotlight** — full-screen immersive category mode with prev/next navigation
+- **People CRM** — contact notes by type (birthday, discussion points, things to remember, etc.)
+- **Cover Image Picker** — choose from curated defaults or upload custom images
+
+## Local Development
 
 ```bash
+cp .env.local.example .env.local
+# Fill in Supabase credentials
+
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Apply the database schema:
+```bash
+# Run supabase/migrations/001_initial_schema.sql in your Supabase SQL editor
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Deploy to Vercel
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Push this folder to a GitHub repo
+2. Import in [vercel.com/new](https://vercel.com/new)
+3. Set environment variables:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+4. Deploy
 
-## Learn More
+## Environment Variables
 
-To learn more about Next.js, take a look at the following resources:
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+# Optional: for Google/Outlook calendar OAuth
+GOOGLE_CLIENT_ID=
+GOOGLE_CLIENT_SECRET=
+MICROSOFT_CLIENT_ID=
+MICROSOFT_CLIENT_SECRET=
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Database
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The full schema is in `supabase/migrations/001_initial_schema.sql`. It includes:
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 12 tables with Row Level Security
+- Automatic profile + CAPTURE category creation on signup
+- All user data isolated by `user_id`
