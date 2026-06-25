@@ -5,14 +5,14 @@ import { Upload, X, Image as ImageIcon } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
 const DEFAULT_COVERS = [
+  'https://yixlzrnbziwiwqubdqha.supabase.co/storage/v1/object/public/Category-Covers/health.jpg',
+  'https://yixlzrnbziwiwqubdqha.supabase.co/storage/v1/object/public/Category-Covers/career.jpg',
+  'https://yixlzrnbziwiwqubdqha.supabase.co/storage/v1/object/public/Category-Covers/relationships.jpg',
+  'https://yixlzrnbziwiwqubdqha.supabase.co/storage/v1/object/public/Category-Covers/mind.jpg',
+  'https://yixlzrnbziwiwqubdqha.supabase.co/storage/v1/object/public/Category-Covers/finance.jpg',
+  'https://yixlzrnbziwiwqubdqha.supabase.co/storage/v1/object/public/Category-Covers/adventure.jpg',
   'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80',
   'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=800&q=80',
-  'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=800&q=80',
-  'https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?w=800&q=80',
-  'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80',
-  'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=800&q=80',
-  'https://images.unsplash.com/photo-1426604966848-d7adac402bff?w=800&q=80',
-  'https://images.unsplash.com/photo-1511884642898-4c92249e20b6?w=800&q=80',
   'https://images.unsplash.com/photo-1490730141103-6cac27aaab94?w=800&q=80',
   'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?w=800&q=80',
   'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800&q=80',
