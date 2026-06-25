@@ -43,11 +43,8 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-[#0a0f1a] px-4">
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <Image src="/logo.svg" alt="Inspire X" width={40} height={40} />
-            <span className="text-2xl font-black tracking-widest uppercase text-white">
-              Inspire X
-            </span>
+          <div className="mb-2">
+            <Image src="/logo-full.png" alt="Inspire X" width={220} height={66} style={{ objectFit: 'contain' }} />
           </div>
           <p className="text-[#94a3b8] text-sm">Powered by Inspire X</p>
         </div>

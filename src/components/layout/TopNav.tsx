@@ -55,11 +55,8 @@ export function TopNav({ userName, avatarUrl }: TopNavProps) {
   return (
     <nav className="sticky top-0 z-50 flex items-center justify-between px-6 h-14 bg-[#111827] border-b border-[#1f2d45]">
       {/* Logo */}
-      <Link href="/categories" className="flex items-center gap-2 mr-6">
-        <Image src="/logo.svg" alt="Inspire X" width={28} height={28} />
-        <span className="text-base font-black tracking-widest uppercase text-white hidden sm:block">
-          Inspire X
-        </span>
+      <Link href="/categories" className="flex items-center mr-6">
+        <Image src="/logo-full.png" alt="Inspire X" width={120} height={36} style={{ objectFit: 'contain' }} />
       </Link>
 
       {/* Nav links */}
