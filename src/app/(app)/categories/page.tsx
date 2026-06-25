@@ -109,7 +109,7 @@ export default function CategoriesPage() {
         <EmptyState
           icon={LayoutGrid}
           title="No categories yet"
-          description="Create your first life category to start organizing your RPM plan."
+          description="Create your first life category to start organizing your Inspire X plan."
           action={
             <Button
               onClick={() => setFormOpen(true)}

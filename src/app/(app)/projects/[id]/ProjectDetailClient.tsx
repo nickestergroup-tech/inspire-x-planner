@@ -323,10 +323,10 @@ export function ProjectDetailClient({ initialProject, category }: ProjectDetailC
               </div>
             </div>
 
-            {/* RPM Blocks */}
+            {/* Action Blocks */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <p className="text-xs font-semibold tracking-widest uppercase text-[#475569]">RPM Blocks</p>
+                <p className="text-xs font-semibold tracking-widest uppercase text-[#475569]">Action Blocks</p>
                 <button onClick={() => { setEditingBlock(undefined); setBlockFormOpen(true) }}
                   className="w-7 h-7 rounded-lg bg-[#1a2235] hover:bg-[#f97316] text-[#94a3b8] hover:text-white flex items-center justify-center transition-colors">
                   <Plus size={14} />

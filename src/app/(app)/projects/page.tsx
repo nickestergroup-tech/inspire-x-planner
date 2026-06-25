@@ -76,7 +76,7 @@ export default function ProjectsPage() {
         <EmptyState
           icon={FolderOpen}
           title="No projects yet"
-          description="Create your first project to start building your RPM plan."
+          description="Create your first project to start building your Inspire X plan."
           action={<Button onClick={() => setFormOpen(true)} className="bg-[#f97316] hover:bg-[#ea6c0a] text-white gap-2"><Plus size={16} />Create Project</Button>}
         />
       ) : (

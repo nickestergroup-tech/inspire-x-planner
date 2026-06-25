@@ -9,7 +9,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Inspire X Planner",
-  description: "RPM Life Planning — Result, Purpose, Massive Action Plan",
+  description: "Inspire X Planner — Design Your Life",
 };
 
 export default function RootLayout({
