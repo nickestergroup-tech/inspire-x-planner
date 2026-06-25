@@ -55,10 +55,17 @@ export function CoverImagePicker({ value, onChange, uploadPath = 'covers' }: Cov
   return (
     <div className="space-y-3">
       {/* Current value preview */}
-      {value ? (
+      {value && (
         <div className="relative rounded-xl overflow-hidden aspect-[16/6] group">
           <img src={value} alt="Cover" className="w-full h-full object-cover" />
-          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+            <button
+              type="button"
+              onClick={() => fileRef.current?.click()}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#f97316] hover:bg-orange-600 text-white text-xs rounded-lg"
+            >
+              <Upload size={12} /> Upload new
+            </button>
             <button
               type="button"
               onClick={() => onChange(null)}
@@ -67,24 +74,6 @@ export function CoverImagePicker({ value, onChange, uploadPath = 'covers' }: Cov
               <X size={12} /> Remove
             </button>
           </div>
-        </div>
-      ) : (
-        <div
-          onClick={() => fileRef.current?.click()}
-          className="rounded-xl border-2 border-dashed border-[#1f2d45] hover:border-[#f97316]/50 transition-colors aspect-[16/6] flex flex-col items-center justify-center cursor-pointer bg-[#0a0f1a]"
-        >
-          {uploading ? (
-            <div className="text-center">
-              <div className="w-6 h-6 border-2 border-[#f97316] border-t-transparent rounded-full animate-spin mx-auto mb-2" />
-              <p className="text-xs text-[#475569]">Uploading...</p>
-            </div>
-          ) : (
-            <>
-              <Upload size={20} className="text-[#475569] mb-2" />
-              <p className="text-xs text-[#475569]">Upload cover image</p>
-              <p className="text-xs text-[#1f2d45]">or choose below</p>
-            </>
-          )}
         </div>
       )}
 
@@ -100,7 +89,26 @@ export function CoverImagePicker({ value, onChange, uploadPath = 'covers' }: Cov
 
       {/* Default covers grid */}
       <div>
-        <p className="text-xs font-semibold tracking-widest uppercase text-[#475569] mb-2">Choose a cover</p>
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-xs font-semibold tracking-widest uppercase text-[#475569]">Choose a cover</p>
+          <button
+            type="button"
+            onClick={() => fileRef.current?.click()}
+            disabled={uploading}
+            className="flex items-center gap-1.5 text-xs text-[#475569] hover:text-[#f97316] transition-colors disabled:opacity-50"
+          >
+            {uploading ? (
+              <>
+                <div className="w-3 h-3 border border-[#f97316] border-t-transparent rounded-full animate-spin" />
+                Uploading...
+              </>
+            ) : (
+              <>
+                <Upload size={11} /> Upload your own
+              </>
+            )}
+          </button>
+        </div>
         <div className="grid grid-cols-4 gap-1.5">
           {DEFAULT_COVERS.map((url) => (
             <button
