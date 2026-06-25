@@ -17,6 +17,7 @@ interface ActionFormProps {
   initial?: Action
   defaultCategoryId?: string
   defaultProjectId?: string
+  defaultPlannedDate?: string
 }
 
 export function ActionForm({
@@ -26,20 +27,18 @@ export function ActionForm({
   initial,
   defaultCategoryId,
   defaultProjectId,
+  defaultPlannedDate,
 }: ActionFormProps) {
-  const [title, setTitle] = useState(initial?.title ?? '')
-  const [notes, setNotes] = useState(initial?.notes ?? '')
-  const [categoryId, setCategoryId] = useState(initial?.category_id ?? defaultCategoryId ?? '')
-  const [projectId, setProjectId] = useState(initial?.project_id ?? defaultProjectId ?? '')
-  const [estimatedHours, setEstimatedHours] = useState(
-    Math.floor((initial?.estimated_minutes ?? 30) / 60)
-  )
-  const [estimatedMins, setEstimatedMins] = useState((initial?.estimated_minutes ?? 30) % 60)
-  const [isStarred, setIsStarred] = useState(initial?.is_starred ?? false)
-  const [weekStart, setWeekStart] = useState(
-    initial?.week_start ?? toDateString(getWeekStart())
-  )
-  const [recurrence, setRecurrence] = useState(initial?.recurrence_rule ?? '')
+  const [title, setTitle] = useState('')
+  const [notes, setNotes] = useState('')
+  const [categoryId, setCategoryId] = useState('')
+  const [projectId, setProjectId] = useState('')
+  const [estimatedHours, setEstimatedHours] = useState(0)
+  const [estimatedMins, setEstimatedMins] = useState(30)
+  const [isStarred, setIsStarred] = useState(false)
+  const [weekStart, setWeekStart] = useState(toDateString(getWeekStart()))
+  const [plannedDate, setPlannedDate] = useState('')
+  const [recurrence, setRecurrence] = useState('')
   const [categories, setCategories] = useState<Category[]>([])
   const [projects, setProjects] = useState<Project[]>([])
   const [saving, setSaving] = useState(false)
@@ -47,11 +46,23 @@ export function ActionForm({
 
   const supabase = createClient()
 
+  // Reset form state every time the dialog opens
   useEffect(() => {
     if (!open) return
+    setTitle(initial?.title ?? '')
+    setNotes(initial?.notes ?? '')
+    setCategoryId(initial?.category_id ?? defaultCategoryId ?? '')
+    setProjectId(initial?.project_id ?? defaultProjectId ?? '')
+    setEstimatedHours(Math.floor((initial?.estimated_minutes ?? 30) / 60))
+    setEstimatedMins((initial?.estimated_minutes ?? 30) % 60)
+    setIsStarred(initial?.is_starred ?? false)
+    setWeekStart(initial?.week_start ?? toDateString(getWeekStart()))
+    setPlannedDate(initial?.planned_date ?? defaultPlannedDate ?? '')
+    setRecurrence(initial?.recurrence_rule ?? '')
+
     supabase.from('categories').select('*').order('sort_order').then(({ data }) => {
       setCategories(data ?? [])
-      if (!categoryId && data && data.length > 0) {
+      if (!initial?.category_id && !defaultCategoryId && data && data.length > 0) {
         const capture = data.find((c) => c.is_system)
         setCategoryId(capture?.id ?? data[0].id)
       }
@@ -82,6 +93,7 @@ export function ActionForm({
           estimated_minutes,
           is_starred: isStarred,
           week_start: weekStart || null,
+          planned_date: plannedDate || null,
           recurrence_rule: recurrence || null,
           updated_at: new Date().toISOString(),
         })
@@ -103,6 +115,7 @@ export function ActionForm({
           estimated_minutes,
           is_starred: isStarred,
           week_start: weekStart || null,
+          planned_date: plannedDate || null,
           recurrence_rule: recurrence || null,
         })
         .select()
@@ -223,12 +236,12 @@ export function ActionForm({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold tracking-widest uppercase text-[#94a3b8] mb-2">
-                Week Start
+                Planned Date
               </label>
               <Input
                 type="date"
-                value={weekStart}
-                onChange={(e) => setWeekStart(e.target.value)}
+                value={plannedDate}
+                onChange={(e) => setPlannedDate(e.target.value)}
                 className="bg-[#1a2235] border-[#1f2d45] text-white"
               />
             </div>

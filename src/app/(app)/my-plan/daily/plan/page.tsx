@@ -225,6 +225,7 @@ export default function DailyPlanPage() {
         onSave={handleActionSaved}
         initial={editingAction}
         defaultCategoryId={defaultCategoryId}
+        defaultPlannedDate={editingAction ? undefined : toDateString(selectedDay)}
       />
     </div>
   )
