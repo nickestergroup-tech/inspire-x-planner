@@ -159,7 +159,7 @@ export function ProjectDetailClient({ initialProject, category }: ProjectDetailC
       {/* Hero */}
       <div className="relative h-56 overflow-hidden">
         {project.cover_image_url ? (
-          <img src={project.cover_image_url} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <img src={project.cover_image_url} alt="" className="absolute inset-0 w-full h-full object-contain" />
         ) : (
           <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${accentColor}44 0%, ${accentColor}11 100%)` }} />
         )}

@@ -33,7 +33,7 @@ export function CategoryCard({ category, onEdit, onArchive, onDelete }: Category
           <img
             src={category.cover_image_url}
             alt={category.name}
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-contain"
           />
         ) : (
           <div

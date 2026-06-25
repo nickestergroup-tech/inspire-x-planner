@@ -27,7 +27,7 @@ export function ProjectCard({ project, category, onEdit, onArchive, onDelete }: 
           <img
             src={project.cover_image_url}
             alt={project.name}
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-contain"
           />
         ) : (
           <div

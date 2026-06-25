@@ -92,7 +92,7 @@ export function CategoryActionsClient({ category }: CategoryActionsClientProps) 
       {/* Hero */}
       <div className="relative h-40 overflow-hidden">
         {category.cover_image_url ? (
-          <img src={category.cover_image_url} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <img src={category.cover_image_url} alt="" className="absolute inset-0 w-full h-full object-contain" />
         ) : (
           <div className="absolute inset-0" style={{ background: `linear-gradient(135deg, ${category.color}55 0%, ${category.color}22 100%)` }} />
         )}

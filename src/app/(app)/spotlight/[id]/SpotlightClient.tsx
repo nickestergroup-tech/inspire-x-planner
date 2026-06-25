@@ -71,7 +71,7 @@ export function SpotlightClient({ category, allCategories }: SpotlightClientProp
   const totalMins = activeActions.reduce((s, a) => s + a.estimated_minutes, 0)
 
   const bgStyle = category.cover_image_url
-    ? { backgroundImage: `url(${category.cover_image_url})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+    ? { backgroundImage: `url(${category.cover_image_url})`, backgroundSize: 'contain', backgroundPosition: 'center', backgroundRepeat: 'no-repeat' }
     : { backgroundColor: category.color }
 
   return (
