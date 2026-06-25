@@ -3,7 +3,6 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
-  Zap,
   CalendarDays,
   Users,
   FolderOpen,
@@ -12,6 +11,7 @@ import {
   Plus,
   LogOut,
 } from 'lucide-react'
+import Image from 'next/image'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,7 +56,7 @@ export function TopNav({ userName, avatarUrl }: TopNavProps) {
     <nav className="sticky top-0 z-50 flex items-center justify-between px-6 h-14 bg-[#111827] border-b border-[#1f2d45]">
       {/* Logo */}
       <Link href="/categories" className="flex items-center gap-2 mr-6">
-        <Zap className="text-[#f97316]" size={22} />
+        <Image src="/logo.svg" alt="Inspire X" width={28} height={28} />
         <span className="text-base font-black tracking-widest uppercase text-white hidden sm:block">
           Inspire X
         </span>

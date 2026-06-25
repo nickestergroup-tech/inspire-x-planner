@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500">
+  <defs>
+    <clipPath id="box">
+      <rect width="500" height="500"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#box)" stroke="#0047AB" stroke-width="190" fill="none" stroke-linecap="butt">
+    <line x1="0" y1="0" x2="500" y2="500"/>
+    <line x1="500" y1="0" x2="0" y2="500"/>
+  </g>
+</svg>

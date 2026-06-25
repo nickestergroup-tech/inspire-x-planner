@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Zap } from 'lucide-react'
+import Image from 'next/image'
 
 export default function RegisterPage() {
   const router = useRouter()
@@ -43,8 +43,8 @@ export default function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-[#0a0f1a] px-4">
       <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-8">
-          <div className="flex items-center gap-2 mb-2">
-            <Zap className="text-[#f97316]" size={32} />
+          <div className="flex items-center gap-3 mb-2">
+            <Image src="/logo.svg" alt="Inspire X" width={40} height={40} />
             <span className="text-2xl font-black tracking-widest uppercase text-white">
               Inspire X
             </span>
