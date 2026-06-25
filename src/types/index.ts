@@ -109,6 +109,7 @@ export interface Action {
   week_start: string | null
   planned_date: string | null
   planned_time: string | null
+  nylas_event_id: string | null
   sort_order: number
   created_at: string
   updated_at: string
@@ -143,25 +144,24 @@ export interface PersonNote {
   created_at: string
 }
 
-export interface CalendarIntegration {
+export interface CalendarConnection {
   id: string
   user_id: string
-  provider: 'google' | 'outlook'
-  access_token: string | null
-  refresh_token: string | null
-  token_expiry: string | null
-  calendar_id: string | null
+  grant_id: string
+  email: string | null
+  provider: string | null
   is_active: boolean
   created_at: string
+  updated_at: string
 }
 
-export type CalendarEvent = {
+export type NylasEvent = {
   id: string
   title: string
-  start: string
-  end: string
-  color?: string
-  provider: 'google' | 'outlook'
+  when: { start_time: number; end_time: number } | { date: string } | { start_date: string; end_date: string }
+  description?: string
+  location?: string
+  organizer?: { email: string; name?: string }
 }
 
 export const CATEGORY_COLORS = [

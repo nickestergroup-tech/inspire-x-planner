@@ -1,23 +1,34 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ChevronLeft, ChevronRight, Clock } from 'lucide-react'
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns'
-import { useEffect } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import { Action, Category } from '@/types'
-import { ICON_MAP } from '@/components/categories/IconPicker'
-import { toDateString, getWeekStart, formatMinutes } from '@/lib/dates'
+import { Action, Category, NylasEvent } from '@/types'
+import { toDateString, formatMinutes } from '@/lib/dates'
 import { Button } from '@/components/ui/button'
 
-function CalendarDay({ date, actions, categories, isCurrentMonth }: {
-  date: Date; actions: Action[]; categories: Record<string, Category>; isCurrentMonth: boolean
+function getEventDate(when: NylasEvent['when']): string | null {
+  if ('start_time' in when) return format(new Date(when.start_time * 1000), 'yyyy-MM-dd')
+  if ('date' in when) return when.date
+  if ('start_date' in when) return when.start_date
+  return null
+}
+
+function CalendarDay({
+  date, actions, nylasEvents, categories, isCurrentMonth,
+}: {
+  date: Date
+  actions: Action[]
+  nylasEvents: NylasEvent[]
+  categories: Record<string, Category>
+  isCurrentMonth: boolean
 }) {
   const isToday = isSameDay(date, new Date())
   const totalMins = actions.reduce((s, a) => s + a.estimated_minutes, 0)
 
   return (
-    <div className={`min-h-[100px] p-1.5 border-r border-b border-[#1f2d45] ${!isCurrentMonth ? 'opacity-30' : ''}`}>
+    <div className={`min-h-[110px] p-1.5 border-r border-b border-[#1f2d45] ${!isCurrentMonth ? 'opacity-30' : ''}`}>
       <div className={`text-xs font-bold mb-1 w-6 h-6 flex items-center justify-center rounded-full ${
         isToday ? 'bg-[#f97316] text-white' : 'text-[#94a3b8]'
       }`}>
@@ -45,6 +56,17 @@ function CalendarDay({ date, actions, categories, isCurrentMonth }: {
         {actions.length > 3 && (
           <div className="text-[10px] text-[#475569] pl-1">+{actions.length - 3} more</div>
         )}
+        {nylasEvents.slice(0, 2).map((ev) => (
+          <div
+            key={ev.id}
+            className="text-[10px] px-1 py-0.5 rounded truncate bg-[#1e3a5f] text-[#60a5fa]"
+          >
+            {ev.title}
+          </div>
+        ))}
+        {nylasEvents.length > 2 && (
+          <div className="text-[10px] text-[#475569] pl-1">+{nylasEvents.length - 2} cal</div>
+        )}
       </div>
     </div>
   )
@@ -54,20 +76,38 @@ export default function CalendarPage() {
   const [currentMonth, setCurrentMonth] = useState(new Date())
   const [actions, setActions] = useState<Action[]>([])
   const [categories, setCategories] = useState<Category[]>([])
+  const [nylasEvents, setNylasEvents] = useState<NylasEvent[]>([])
+  const [hasCalendar, setHasCalendar] = useState(false)
   const supabase = createClient()
 
   async function load() {
     const monthStart = startOfMonth(currentMonth)
     const monthEnd = endOfMonth(currentMonth)
-    const [catRes, actRes] = await Promise.all([
+    const [catRes, actRes, connRes] = await Promise.all([
       supabase.from('categories').select('*').order('sort_order'),
       supabase.from('actions').select('*')
         .gte('planned_date', toDateString(monthStart))
         .lte('planned_date', toDateString(monthEnd))
         .order('sort_order'),
+      supabase.from('calendar_connections').select('grant_id').eq('is_active', true).single(),
     ])
     setCategories(catRes.data ?? [])
     setActions(actRes.data ?? [])
+
+    if (connRes.data?.grant_id) {
+      setHasCalendar(true)
+      // Fetch Nylas events for the month
+      const evRes = await fetch(
+        `/api/calendar/nylas/events?start=${monthStart.toISOString()}&end=${monthEnd.toISOString()}`
+      )
+      if (evRes.ok) {
+        const evData = await evRes.json()
+        setNylasEvents(evData.events ?? [])
+      }
+    } else {
+      setHasCalendar(false)
+      setNylasEvents([])
+    }
   }
 
   useEffect(() => { load() }, [currentMonth])
@@ -75,7 +115,6 @@ export default function CalendarPage() {
   const catMap: Record<string, Category> = {}
   for (const c of categories) catMap[c.id] = c
 
-  // Build calendar grid (Mon-Sun weeks)
   const monthStart = startOfMonth(currentMonth)
   const monthEnd = endOfMonth(currentMonth)
   const calStart = startOfWeek(monthStart, { weekStartsOn: 1 })
@@ -89,11 +128,23 @@ export default function CalendarPage() {
     return actions.filter((a) => a.planned_date === toDateString(day))
   }
 
+  function getDayNylasEvents(day: Date) {
+    const dateStr = toDateString(day)
+    return nylasEvents.filter((ev) => getEventDate(ev.when) === dateStr)
+  }
+
   return (
     <div className="min-h-screen bg-[#0a0f1a]">
-      {/* Header */}
       <div className="sticky top-14 z-40 bg-[#111827] border-b border-[#1f2d45] px-6 py-3 flex items-center justify-between">
-        <h1 className="text-sm font-black tracking-widest uppercase text-white">Calendar</h1>
+        <div className="flex items-center gap-3">
+          <h1 className="text-sm font-black tracking-widest uppercase text-white">Calendar</h1>
+          {hasCalendar && (
+            <div className="flex items-center gap-1.5 text-xs text-emerald-400">
+              <div className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+              Synced
+            </div>
+          )}
+        </div>
         <div className="flex items-center gap-3">
           <button
             onClick={() => setCurrentMonth(subMonths(currentMonth, 1))}
@@ -121,6 +172,20 @@ export default function CalendarPage() {
       </div>
 
       <div className="px-6 py-4">
+        {/* Legend */}
+        {hasCalendar && (
+          <div className="flex items-center gap-4 mb-3 text-[10px] text-[#475569]">
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-2 rounded bg-[#f97316]/30" />
+              <span>App actions</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <div className="w-3 h-2 rounded bg-[#1e3a5f]" />
+              <span>Calendar events</span>
+            </div>
+          </div>
+        )}
+
         {/* Day headers */}
         <div className="grid grid-cols-7 border-l border-t border-[#1f2d45]">
           {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day) => (
@@ -137,6 +202,7 @@ export default function CalendarPage() {
               key={toDateString(day)}
               date={day}
               actions={getDayActions(day)}
+              nylasEvents={getDayNylasEvents(day)}
               categories={catMap}
               isCurrentMonth={isSameMonth(day, currentMonth)}
             />

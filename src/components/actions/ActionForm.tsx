@@ -72,6 +72,22 @@ export function ActionForm({
     })
   }, [open])
 
+  function syncToNylas(actionId: string, plannedDateVal: string | null, existingEventId: string | null) {
+    if (!plannedDateVal) return
+    fetch('/api/calendar/nylas/sync-action', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action_id: actionId,
+        title,
+        planned_date: plannedDateVal,
+        estimated_minutes: estimatedHours * 60 + estimatedMins,
+        notes: notes || null,
+        nylas_event_id: existingEventId,
+      }),
+    }).catch(() => {})
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setSaving(true)
@@ -102,6 +118,7 @@ export function ActionForm({
         .single()
 
       if (error) { setError(error.message); setSaving(false); return }
+      syncToNylas(data.id, data.planned_date, data.nylas_event_id)
       onSave(data)
     } else {
       const { data, error } = await supabase
@@ -122,6 +139,7 @@ export function ActionForm({
         .single()
 
       if (error) { setError(error.message); setSaving(false); return }
+      syncToNylas(data.id, data.planned_date, null)
       onSave(data)
     }
 

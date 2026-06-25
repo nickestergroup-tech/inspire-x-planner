@@ -50,13 +50,12 @@ export default function WeeklyReflectionPage() {
 
   async function handleSave() {
     setSaving(true)
-    const weekStartStr = toDateString(weekStart)
-    const { data: existing } = await supabase.from('weeks').select('id').eq('week_start', weekStartStr).maybeSingle()
-    if (existing) {
-      await supabase.from('weeks').update({ reflection, wins }).eq('week_start', weekStartStr)
-    } else {
-      await supabase.from('weeks').insert({ week_start: weekStartStr, reflection, wins })
-    }
+    const res = await fetch('/api/weeks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ week_start: toDateString(weekStart), reflection, wins }),
+    })
+    if (!res.ok) { setSaving(false); return }
     setSaving(false)
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
@@ -139,7 +138,7 @@ export default function WeeklyReflectionPage() {
 
             <Button
               onClick={handleSave}
-              disabled={saving}
+              disabled={saving || saved}
               className="w-full bg-[#f97316] hover:bg-orange-600 text-white"
             >
               {saved ? 'Saved!' : saving ? 'Saving...' : 'Save Reflection'}

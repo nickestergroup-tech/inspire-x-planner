@@ -10,6 +10,7 @@ import {
   ChevronDown,
   Plus,
   LogOut,
+  Settings,
 } from 'lucide-react'
 import Image from 'next/image'
 import {
@@ -152,6 +153,14 @@ export function TopNav({ userName, avatarUrl }: TopNavProps) {
                 <DropdownMenuSeparator className="bg-[#1f2d45]" />
               </>
             )}
+            <DropdownMenuItem
+              className={menuItemClass}
+              onClick={() => router.push('/settings')}
+            >
+              <Settings size={14} className="mr-2" />
+              Settings
+            </DropdownMenuItem>
+            <DropdownMenuSeparator className="bg-[#1f2d45]" />
             <DropdownMenuItem
               onClick={handleSignOut}
               className="cursor-pointer text-[#ef4444] hover:bg-[#1a2235]"
