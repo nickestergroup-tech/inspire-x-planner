@@ -230,11 +230,9 @@ export function PeopleClient({ initialPeople }: PeopleClientProps) {
   }
 
   async function handleNoteAdd(personId: string, noteType: string, content: string) {
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
     const { data } = await supabase
       .from('person_notes')
-      .insert({ person_id: personId, note_type: noteType, content, user_id: user.id })
+      .insert({ person_id: personId, note_type: noteType, content })
       .select()
       .single()
     if (data) {
