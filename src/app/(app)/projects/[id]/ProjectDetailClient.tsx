@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import {
-  ChevronLeft, Plus, Star, Calendar, Pencil, Trash2, Check, X, ImagePlus,
+  ChevronLeft, Plus, Star, Calendar, Pencil, Trash2, Check, X, ImagePlus, Upload,
 } from 'lucide-react'
 import { Project, Category, KeyResult, Action, RpmBlock } from '@/types'
 import { CategoryBadge } from '@/components/shared/CategoryBadge'
@@ -67,6 +67,80 @@ function InlineEdit({
         </div>
       ) : (
         <span className="text-[#475569] italic text-sm">{placeholder}</span>
+      )}
+    </div>
+  )
+}
+
+function InspirationBoard({ project, onUpdate }: { project: Project; onUpdate: (imgs: string[]) => void }) {
+  const [uploading, setUploading] = useState(false)
+  const fileRef = useRef<HTMLInputElement>(null)
+  const supabase = createClient()
+  const images: string[] = Array.isArray(project.inspiration_images) ? project.inspiration_images : []
+
+  async function handleUpload(file: File) {
+    if (!file.type.startsWith('image/')) return
+    setUploading(true)
+    try {
+      const ext = file.name.split('.').pop()
+      const filename = `inspiration/${project.id}/${Date.now()}.${ext}`
+      const { error } = await supabase.storage.from('images').upload(filename, file, { upsert: true })
+      if (error) throw error
+      const { data } = supabase.storage.from('images').getPublicUrl(filename)
+      const updated = [...images, data.publicUrl]
+      await supabase.from('projects').update({ inspiration_images: updated }).eq('id', project.id)
+      onUpdate(updated)
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  async function handleRemove(url: string) {
+    const updated = images.filter((u) => u !== url)
+    await supabase.from('projects').update({ inspiration_images: updated }).eq('id', project.id)
+    onUpdate(updated)
+  }
+
+  return (
+    <div className="bg-[#111827] rounded-xl border border-[#1f2d45] p-5">
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-xs font-semibold tracking-widest uppercase text-[#475569]">Inspiration Board</p>
+        <button
+          onClick={() => fileRef.current?.click()}
+          disabled={uploading}
+          className="flex items-center gap-1.5 text-xs text-[#475569] hover:text-[#f97316] transition-colors disabled:opacity-50"
+        >
+          {uploading ? (
+            <><div className="w-3 h-3 border border-[#f97316] border-t-transparent rounded-full animate-spin" /> Uploading...</>
+          ) : (
+            <><Upload size={12} /> Add image</>
+          )}
+        </button>
+      </div>
+      <input ref={fileRef} type="file" accept="image/*" className="hidden"
+        onChange={(e) => { const f = e.target.files?.[0]; if (f) handleUpload(f) }} />
+      {images.length === 0 ? (
+        <div
+          onClick={() => fileRef.current?.click()}
+          className="flex flex-col items-center justify-center py-8 text-center cursor-pointer rounded-lg border-2 border-dashed border-[#1f2d45] hover:border-[#f97316]/40 transition-colors"
+        >
+          <ImagePlus size={24} className="text-[#475569] mb-2" />
+          <p className="text-[#475569] text-sm">Click to add inspiring images</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 gap-2">
+          {images.map((url) => (
+            <div key={url} className="relative rounded-lg overflow-hidden aspect-square group">
+              <img src={url} alt="" className="w-full h-full object-contain bg-[#0a0f1a]" />
+              <button
+                onClick={() => handleRemove(url)}
+                className="absolute top-1 right-1 w-5 h-5 bg-black/70 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                <X size={10} className="text-white" />
+              </button>
+            </div>
+          ))}
+        </div>
       )}
     </div>
   )
@@ -312,16 +386,8 @@ export function ProjectDetailClient({ initialProject, category }: ProjectDetailC
               />
             </div>
 
-            {/* Inspiration Board placeholder */}
-            <div className="bg-[#111827] rounded-xl border border-[#1f2d45] p-5">
-              <p className="text-xs font-semibold tracking-widest uppercase text-[#475569] mb-3">
-                Inspiration Board
-              </p>
-              <div className="flex flex-col items-center justify-center py-8 text-center">
-                <ImagePlus size={28} className="text-[#475569] mb-2" />
-                <p className="text-[#475569] text-sm">Add inspiring images — coming in Phase 9</p>
-              </div>
-            </div>
+            {/* Inspiration Board */}
+            <InspirationBoard project={project} onUpdate={(imgs) => setProject((p) => ({ ...p, inspiration_images: imgs }))} />
 
             {/* Focus Blocks */}
             <div>

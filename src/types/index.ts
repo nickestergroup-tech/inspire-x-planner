@@ -50,6 +50,7 @@ export interface Project {
   ultimate_result: string | null
   ultimate_purpose: string | null
   cover_image_url: string | null
+  inspiration_images: string[] | null
   is_archived: boolean
   sort_order: number
   created_at: string
