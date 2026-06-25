@@ -226,7 +226,7 @@ export function CategoryActionsClient({ category }: CategoryActionsClientProps) 
           {/* RIGHT: Blocks */}
           <div>
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xs font-semibold tracking-widest uppercase text-[#475569]">Action Blocks</h2>
+              <h2 className="text-xs font-semibold tracking-widest uppercase text-[#475569]">Focus Blocks</h2>
               <button
                 onClick={() => { setEditingBlock(undefined); setBlockFormOpen(true) }}
                 className="w-8 h-8 rounded-lg bg-[#1a2235] hover:bg-[#f97316] text-[#94a3b8] hover:text-white flex items-center justify-center transition-colors"
@@ -237,7 +237,7 @@ export function CategoryActionsClient({ category }: CategoryActionsClientProps) 
 
             {activeBlocks.length === 0 && !loading ? (
               <div className="text-center py-8 text-[#475569] text-sm bg-[#111827] rounded-xl border border-[#1f2d45]">
-                <p className="mb-2">No Action Blocks yet.</p>
+                <p className="mb-2">No Focus Blocks yet.</p>
                 <p className="text-xs">Group your actions into focused blocks with a Result &amp; Purpose.</p>
               </div>
             ) : (

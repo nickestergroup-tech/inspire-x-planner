@@ -42,7 +42,7 @@ export default function LoginPage() {
               Inspire X
             </span>
           </div>
-          <p className="text-[#94a3b8] text-sm">Inspire X Planner</p>
+          <p className="text-[#94a3b8] text-sm">Powered by Inspire X</p>
         </div>
 
         <div className="bg-[#111827] rounded-xl border border-[#1f2d45] p-8">
