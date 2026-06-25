@@ -214,7 +214,9 @@ export function PeopleClient({ initialPeople }: PeopleClientProps) {
 
   async function handleAddPerson() {
     if (!newName.trim()) return
-    const { data } = await supabase.from('people').insert({ name: newName.trim() }).select().single()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
+    const { data } = await supabase.from('people').insert({ name: newName.trim(), user_id: user.id }).select().single()
     if (data) {
       setPeople((prev) => [...prev, { ...data, notes: [] }])
       setNewName('')
@@ -228,9 +230,11 @@ export function PeopleClient({ initialPeople }: PeopleClientProps) {
   }
 
   async function handleNoteAdd(personId: string, noteType: string, content: string) {
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return
     const { data } = await supabase
       .from('person_notes')
-      .insert({ person_id: personId, note_type: noteType, content })
+      .insert({ person_id: personId, note_type: noteType, content, user_id: user.id })
       .select()
       .single()
     if (data) {
